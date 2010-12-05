@@ -49,7 +49,7 @@
 
 # Requirements
 
-- msgpack(optinal)
+- msgpack(optional)
 
 # Trap
 

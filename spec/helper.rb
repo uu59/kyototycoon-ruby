@@ -31,6 +31,11 @@ describe do
     @kt.cas('foo', 'oldbaz', 'newbaz').should be_true
     @kt.cas('foo', 'oldbaz', 'newbaz').should be_false
     @kt.get('foo').should == 'newbaz'
+    @kt.clear
+
+    @kt['foo'] ||= 'aaa'
+    @kt['foo'] ||= 'bbb'
+    @kt['foo'].should == 'aaa'
   end
 
   it 'should provide bulk' do

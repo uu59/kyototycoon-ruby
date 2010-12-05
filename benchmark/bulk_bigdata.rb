@@ -1,6 +1,6 @@
 # -- coding: utf-8
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..'))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require "rubygems"
 require "benchmark"
 require 'kyoto_tycoon.rb'

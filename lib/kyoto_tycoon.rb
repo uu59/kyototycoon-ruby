@@ -175,8 +175,6 @@ class KyotoTycoon
     Tsvrpc.parse(res.body)
   end
 
-
-
   def request(path, params=nil)
     if @db
       params ||= {}
