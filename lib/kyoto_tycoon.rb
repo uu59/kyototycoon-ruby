@@ -162,7 +162,6 @@ class KyotoTycoon
 
   def match_prefix(prefix)
     res = request('/rpc/match_prefix', {:prefix => prefix})
-    p res.body
     Tsvrpc.parse(res.body)
   end
 
@@ -171,7 +170,6 @@ class KyotoTycoon
       re = re.source
     end
     res = request('/rpc/match_regex', {:regex => re})
-    p res.body
     Tsvrpc.parse(res.body)
   end
 
