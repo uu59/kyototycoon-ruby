@@ -21,7 +21,7 @@ class KyotoTycoon
         req['Content-Type'] = "application/x-www-form-urlencoded"
         req['Connection'] = "close"
         res = @http.request(req)
-        [res.code, res.body]
+        [res.code.to_i, res.body]
       end
     end
   end

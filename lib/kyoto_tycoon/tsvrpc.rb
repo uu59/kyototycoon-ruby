@@ -13,53 +13,24 @@ class KyotoTycoon
     def http(agent)
       case agent
         when :skinny
-          @http ||= Skinny.new(@host, @port)
+          Skinny.new(@host, @port)
         else
-          @http ||= Nethttp.new(@host, @port)
+          Nethttp.new(@host, @port)
       end
     end
 
-    def request(path, method, params, agent)
+    def request(path, params, agent)
       status,body = *http(agent).request(path, params)
-      #res = request_nethttp(path, method, params)
-      if !["200", "450"].include?(status)
+      if ![200, 450].include?(status)
         raise body
       end
       {:status => status, :body => body}
     end
 
-    def request_nethttp(path, method, params)
-      if params
-        query = params.inject([]){|r, tmp|
-          r << tmp.map{|v| CGI.escape(v.to_s)}.join("=")
-        }.join("&")
-      end
-      case method
-        when :get
-          if query
-            path += query
-          end
-          req = Net::HTTP::Get.new(path)
-        when :post
-          req = Net::HTTP::Post.new(path)
-          if query
-            req.body = query
-            req['Content-Length'] = query.size
-          end
-          req['Content-Type'] = "application/x-www-form-urlencoded"
-        when :put
-          req = Net::HTTP::Put.new
-        when :delete
-          req = Net::HTTP::Delete.new
-      end
-      res = nethttp.request(req)
-    end
-
     def self.parse(body)
-      body.split("\n").map{|line|
-        line.split("\t", 2).map{|v| CGI.unescape(v)}
-      }.inject({}){|r,tmp|
-        r[tmp.first] = tmp.last
+      body.split("\n").inject({}){|r, line|
+        k,v = *line.split("\t", 2).map{|v| CGI.unescape(v)}
+        r[k] = v
         r
       }
     end

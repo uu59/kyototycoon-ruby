@@ -172,7 +172,7 @@ class KyotoTycoon
       params ||= {}
       params[:DB] = @db
     end
-    res = @tsvrpc.request(path, :post, params, @agent)
+    res = @tsvrpc.request(path, params, @agent)
     @logger.info("#{path}: #{res[:code]} with query parameters #{params.inspect}")
     res
   end

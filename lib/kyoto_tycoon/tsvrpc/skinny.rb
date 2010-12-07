@@ -34,7 +34,7 @@ class KyotoTycoon
         end
         body = sock.read(bodylen)
         sock.close
-        [status, body]
+        [status.to_i, body]
       end
     end
   end
