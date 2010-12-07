@@ -47,8 +47,8 @@ class KyotoTycoon
   end
   alias_method :[], :get
 
-  def remove(key)
-    request('/rpc/remove', {:key => key})
+  def remove(*keys)
+    remove_bulk(keys.flatten)
   end
   alias_method :delete, :remove
 

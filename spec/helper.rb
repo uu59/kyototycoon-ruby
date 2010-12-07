@@ -57,6 +57,24 @@ describe do
     @kt.get_bulk(data.keys).should == {'num' => '0'}
   end
 
+  it 'should provide delete variation' do
+    build = lambda {|kt|
+      kt.clear
+      kt.set_bulk({
+        :a => 1,
+        :b => 1,
+        :c => 1,
+      })
+    }
+    build.call(@kt)
+    @kt.delete('a','b')
+    @kt.keys.should == ['c']
+
+    build.call(@kt)
+    @kt.delete(['a', 'b'])
+    @kt.keys.should == ['c']
+  end
+
   it 'should increment' do
     @kt.increment('foo').should == 1
     @kt.increment('foo').should == 2
