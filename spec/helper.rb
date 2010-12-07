@@ -36,6 +36,11 @@ describe do
     @kt['foo'] ||= 'aaa'
     @kt['foo'] ||= 'bbb'
     @kt['foo'].should == 'aaa'
+    @kt.clear
+
+    @kt[:a] = 1
+    @kt[:b] = 1
+    @kt.keys.should == %w!a b!
   end
 
   it 'should provide bulk' do

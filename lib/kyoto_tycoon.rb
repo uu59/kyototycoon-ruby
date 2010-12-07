@@ -179,6 +179,10 @@ class KyotoTycoon
     keys
   end
 
+  def keys
+    match_prefix("")
+  end
+
   def request(path, params=nil)
     if @db
       params ||= {}
