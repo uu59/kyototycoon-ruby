@@ -156,7 +156,13 @@ class KyotoTycoon
 
   def match_prefix(prefix)
     res = request('/rpc/match_prefix', {:prefix => prefix})
-    Tsvrpc.parse(res[:body])
+    keys = []
+    Tsvrpc.parse(res[:body]).each{|k,v|
+      if k != 'num'
+        keys << k[1, k.length]
+      end
+    }
+    keys
   end
 
   def match_regex(re)
@@ -164,7 +170,13 @@ class KyotoTycoon
       re = re.source
     end
     res = request('/rpc/match_regex', {:regex => re})
-    Tsvrpc.parse(res[:body])
+    keys = []
+    Tsvrpc.parse(res[:body]).each{|k,v|
+      if k != 'num'
+        keys << k[1, k.length]
+      end
+    }
+    keys
   end
 
   def request(path, params=nil)

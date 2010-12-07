@@ -65,4 +65,17 @@ describe do
     @kt.report['db_total_count'].to_i.should == 2
     @kt.status['count'].to_i.should == 2
   end
+
+  it 'should match prefixes' do
+    @kt['123'] = 1
+    @kt['124'] = 1
+    @kt['125'] = 1
+    @kt['999'] = 1
+    @kt['9999'] = 1
+    @kt.match_prefix("12").should == %w!123 124 125!
+    @kt.match_prefix("9").should == %w!999 9999!
+    @kt.match_prefix("9999").should == %w!9999!
+    @kt.match_regex(/^12/).should == %w!123 124 125!
+    @kt.match_regex(/^9+$/).should == %w!999 9999!
+  end
 end
