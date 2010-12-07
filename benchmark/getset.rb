@@ -1,26 +1,26 @@
 # -- coding: utf-8
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require "rubygems"
 require "benchmark"
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'kyoto_tycoon.rb'
 
 kt = KyotoTycoon.new
-bulk={}
-50000.times.map{|n|
-  bulk[n.to_s] = "#{n}-#{rand}"
-}
 job = lambda {|kt|
-  kt.set_bulk(bulk)
-  kt.get_bulk(bulk.keys)
+  1000.times{|n|
+    kt.set(n.to_s, n)
+    kt.get(n)
+  }
   kt.clear
 }
 Benchmark.bm do |x|
   x.report('default') {
+    kt.agent = :nethttp
     kt.serializer=:default
     job.call(kt)
   }
   x.report('msgpack') {
+    kt.agent = :nethttp
     kt.serializer=:msgpack
     job.call(kt)
   }

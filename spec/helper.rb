@@ -59,10 +59,10 @@ describe do
     @kt.increment('foo', 10).should == 13
   end
 
-  it 'should keepalive switch' do
-    @kt.keepalive=true
-    @kt.tsvrpc.nethttp.active?.should be_true
-    @kt.keepalive=false
-    @kt.tsvrpc.nethttp.active?.should be_false
+  it 'should provide status/report' do
+    @kt[:a] = 1
+    @kt[:b] = 2
+    @kt.report['db_total_count'].to_i.should == 2
+    @kt.status['count'].to_i.should == 2
   end
 end

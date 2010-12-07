@@ -6,6 +6,8 @@ require "net/http"
 require "kyoto_tycoon/serializer.rb"
 require "kyoto_tycoon/serializer/default.rb"
 require "kyoto_tycoon/tsvrpc.rb"
+require "kyoto_tycoon/tsvrpc/skinny.rb"
+require "kyoto_tycoon/tsvrpc/nethttp.rb"
 
 class KyotoTycoon
   attr_reader :tsvrpc
@@ -16,7 +18,7 @@ class KyotoTycoon
     @serializer = KyotoTycoon::Serializer::Default
     @tsvrpc = Tsvrpc.new(@host, @port)
     @logger = Logger.new(nil)
-    @keepalive = false
+    @agent = :nethttp
   end
 
   def serializer= (adaptor=:default)
@@ -35,21 +37,13 @@ class KyotoTycoon
     @logger = logger
   end
 
-  def keepalive=(flag)
-    if @keepalive != flag
-      case flag
-        when false
-          @tsvrpc.nethttp.finish
-        when true
-          @tsvrpc.nethttp.start
-      end
-    end
-    @keepalive = flag
+  def agent=(agent)
+    @agent = agent
   end
 
   def get(key)
     res = request('/rpc/get', {:key => key})
-    @serializer.decode(Tsvrpc.parse(res.body)['value'])
+    @serializer.decode(Tsvrpc.parse(res[:body])['value'])
   end
   alias_method :[], :get
 
@@ -60,7 +54,7 @@ class KyotoTycoon
 
   def set(key, value, xt=nil)
     res = request('/rpc/set', {:key => key, :value => @serializer.encode(value), :xt => xt})
-    Tsvrpc.parse(res.body)
+    Tsvrpc.parse(res[:body])
   end
   def []= (key, xt=nil, value)
     set(key, value, xt)
@@ -68,12 +62,12 @@ class KyotoTycoon
 
   def add(key, value, xt=nil)
     res = request('/rpc/add', {:key => key, :value => @serializer.encode(value), :xt => xt})
-    Tsvrpc.parse(res.body)
+    Tsvrpc.parse(res[:body])
   end
 
   def replace(key, value, xt=nil)
     res = request('/rpc/replace', {:key => key, :value => @serializer.encode(value), :xt => xt})
-    Tsvrpc.parse(res.body)
+    Tsvrpc.parse(res[:body])
   end
 
   def append(key, value, xt=nil)
@@ -82,7 +76,7 @@ class KyotoTycoon
 
   def cas(key, oldval, newval, xt=nil)
     res = request('/rpc/cas', {:key => key, :oval=> @serializer.encode(oldval), :nval => @serializer.encode(newval), :xt => xt})
-    case res.code.to_i
+    case res[:status].to_i
       when 200
         true
       when 450
@@ -92,12 +86,12 @@ class KyotoTycoon
 
   def increment(key, num=1, xt=nil)
     res = request('/rpc/increment', {:key => key, :num => num, :xt => xt})
-    Tsvrpc.parse(res.body)['num'].to_i
+    Tsvrpc.parse(res[:body])['num'].to_i
   end
 
   def increment_double(key, num, xt=nil)
     res = request('/rpc/increment_double', {:key => key, :num => num, :xt => xt})
-    Tsvrpc.parse(res.body)['num'].to_f
+    Tsvrpc.parse(res[:body])['num'].to_f
   end
 
   def set_bulk(records)
@@ -107,7 +101,7 @@ class KyotoTycoon
       values["_#{k}"] = @serializer.encode(v)
     }
     res = request('/rpc/set_bulk', values)
-    Tsvrpc.parse(res.body)
+    Tsvrpc.parse(res[:body])
   end
 
   def get_bulk(keys)
@@ -117,7 +111,7 @@ class KyotoTycoon
     }
     res = request('/rpc/get_bulk', params)
     ret = {}
-    Tsvrpc.parse(res.body).each{|k,v|
+    Tsvrpc.parse(res[:body]).each{|k,v|
       ret[k] = k.match(/^_/) ? @serializer.decode(v) : v
     }
     ret
@@ -129,7 +123,7 @@ class KyotoTycoon
       params
     }
     res = request('/rpc/remove_bulk', params)
-    Tsvrpc.parse(res.body)
+    Tsvrpc.parse(res[:body])
   end
 
   def clear
@@ -147,22 +141,22 @@ class KyotoTycoon
 
   def echo(value)
     res = request('/rpc/echo', value)
-    Tsvrpc.parse(res.body)
+    Tsvrpc.parse(res[:body])
   end
 
   def report
     res = request('/rpc/report')
-    Tsvrpc.parse(res.body)
+    Tsvrpc.parse(res[:body])
   end
 
   def status
     res = request('/rpc/status')
-    Tsvrpc.parse(res.body)
+    Tsvrpc.parse(res[:body])
   end
 
   def match_prefix(prefix)
     res = request('/rpc/match_prefix', {:prefix => prefix})
-    Tsvrpc.parse(res.body)
+    Tsvrpc.parse(res[:body])
   end
 
   def match_regex(re)
@@ -170,7 +164,7 @@ class KyotoTycoon
       re = re.source
     end
     res = request('/rpc/match_regex', {:regex => re})
-    Tsvrpc.parse(res.body)
+    Tsvrpc.parse(res[:body])
   end
 
   def request(path, params=nil)
@@ -178,8 +172,8 @@ class KyotoTycoon
       params ||= {}
       params[:DB] = @db
     end
-    res = @tsvrpc.request(path, :post, params)
-    @logger.info("#{path}: #{res.code} with query parameters #{params.inspect}")
+    res = @tsvrpc.request(path, :post, params, @agent)
+    @logger.info("#{path}: #{res[:code]} with query parameters #{params.inspect}")
     res
   end
 end

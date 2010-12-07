@@ -1,5 +1,7 @@
 # -- coding: utf-8
 
+require "socket"
+require "net/http"
 
 class KyotoTycoon
   class Tsvrpc
@@ -8,17 +10,22 @@ class KyotoTycoon
       @port = port
     end
 
-    def nethttp
-      @http ||= ::Net::HTTP.new(@host, @port)
+    def http(agent)
+      case agent
+        when :skinny
+          @http ||= Skinny.new(@host, @port)
+        else
+          @http ||= Nethttp.new(@host, @port)
+      end
     end
 
-    def request(path, method, params)
-      method = method.downcase.to_sym
-      res = request_nethttp(path, method, params)
-      if !["200", "450"].include?(res.code)
-        raise res.body
+    def request(path, method, params, agent)
+      status,body = *http(agent).request(path, params)
+      #res = request_nethttp(path, method, params)
+      if !["200", "450"].include?(status)
+        raise body
       end
-      res
+      {:status => status, :body => body}
     end
 
     def request_nethttp(path, method, params)
@@ -55,6 +62,16 @@ class KyotoTycoon
         r[tmp.first] = tmp.last
         r
       }
+    end
+
+    def self.build_query(params)
+      query = ""
+      if params
+        query = params.inject([]){|r, tmp|
+          r << tmp.map{|v| CGI.escape(v.to_s)}.join("=")
+        }.join("&")
+      end
+      query
     end
   end
 end

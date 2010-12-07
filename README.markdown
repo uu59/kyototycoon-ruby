@@ -22,10 +22,6 @@
     @kt.db = '*' # on memory, or DB file as KT known
     @kt.logger = 'ktlib.log' # => logfile or such as STDERR
 
-    # using HTTP Keep-Alive.
-    # `false` is default because seems like `true` has some problems(slow, and record consistency broken) on my environment.
-    @kt.keepalive = true
-
     # set/bulk_set/get/bulk_get uses msgpack. default as :default
     @kt.serializer = :msgpack
 
