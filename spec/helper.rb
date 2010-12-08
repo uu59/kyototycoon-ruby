@@ -40,7 +40,7 @@ describe do
 
     @kt[:a] = 1
     @kt[:b] = 1
-    @kt.keys.should == %w!a b!
+    @kt.keys.sort.should == %w!a b!.sort
   end
 
   it 'should provide bulk' do
@@ -52,7 +52,7 @@ describe do
     }
     receive['num'] = "10"
     @kt.set_bulk(data)
-    @kt.get_bulk(data.keys).should == receive
+    @kt.get_bulk(data.keys).sort.should == receive.sort
     @kt.remove_bulk(data.keys)
     @kt.get_bulk(data.keys).should == {'num' => '0'}
   end
@@ -95,10 +95,10 @@ describe do
     @kt['125'] = 1
     @kt['999'] = 1
     @kt['9999'] = 1
-    @kt.match_prefix("12").should == %w!123 124 125!
-    @kt.match_prefix("9").should == %w!999 9999!
-    @kt.match_prefix("9999").should == %w!9999!
-    @kt.match_regex(/^12/).should == %w!123 124 125!
-    @kt.match_regex(/^9+$/).should == %w!999 9999!
+    @kt.match_prefix("12").sort.should == %w!123 124 125!.sort
+    @kt.match_prefix("9").sort.should == %w!999 9999!.sort
+    @kt.match_prefix("9999").sort.should == %w!9999!
+    @kt.match_regex(/^12/).sort.should == %w!123 124 125!.sort
+    @kt.match_regex(/^9+$/).sort.should == %w!999 9999!.sort
   end
 end

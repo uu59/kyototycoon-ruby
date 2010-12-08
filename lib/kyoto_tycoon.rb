@@ -2,6 +2,7 @@
 
 require "logger"
 require "cgi"
+require "socket"
 require "net/http"
 require "kyoto_tycoon/serializer.rb"
 require "kyoto_tycoon/serializer/default.rb"
@@ -56,9 +57,7 @@ class KyotoTycoon
     res = request('/rpc/set', {:key => key, :value => @serializer.encode(value), :xt => xt})
     Tsvrpc.parse(res[:body])
   end
-  def []= (key, xt=nil, value)
-    set(key, value, xt)
-  end
+  alias_method :[]=, :set
 
   def add(key, value, xt=nil)
     res = request('/rpc/add', {:key => key, :value => @serializer.encode(value), :xt => xt})

@@ -7,7 +7,7 @@ class KyotoTycoon
       if File.exists?(File.join(dir, "#{adaptor}.rb"))
         require "#{dir}/#{adaptor}.rb"
       end
-      const_get(adaptor.capitalize)
+      const_get(adaptor.to_s.capitalize)
     end
   end
 end

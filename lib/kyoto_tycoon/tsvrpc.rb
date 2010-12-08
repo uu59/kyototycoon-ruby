@@ -1,7 +1,5 @@
 # -- coding: utf-8
 
-require "socket"
-require "net/http"
 
 class KyotoTycoon
   class Tsvrpc
