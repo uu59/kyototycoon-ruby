@@ -16,6 +16,16 @@ describe do
     @kt.clear
   end
 
+  it 'should handle multi servers' do
+    kt = KyotoTycoon.new('8.8.8.8', 11111)
+    kt.db='*'
+    kt.connect_timeout = 0.1
+    kt.add_server('0.0.0.0', 1978)
+    kt.add_server('example.com', 1978)
+    kt['foo'] = 'bar'
+    kt[:foo].should == 'bar'
+  end
+
   it 'should provide simple kvs feature' do
     @kt.set('a', 'b')
     @kt.get('a').should == 'b'

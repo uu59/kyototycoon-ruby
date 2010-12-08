@@ -13,16 +13,18 @@ require "kyoto_tycoon/tsvrpc/nethttp.rb"
 
 class KyotoTycoon
   attr_reader :tsvrpc
-  attr_accessor :colenc
+  attr_accessor :colenc, :connect_timeout
 
   def initialize(host='0.0.0.0', port=1978)
     @host = host
     @port = port
+    @servers = [[@host, @port]]
     @serializer = KyotoTycoon::Serializer::Default
     @tsvrpc = Tsvrpc.new(@host, @port)
     @logger = Logger.new(nil)
     @agent = :nethttp
     @colenc = :U
+    @connect_timeout = 0.5
   end
 
   def serializer= (adaptor=:default)
@@ -43,6 +45,20 @@ class KyotoTycoon
 
   def agent=(agent)
     @agent = agent
+  end
+
+  def add_server(host, port)
+    @servers << [host, port]
+    newserver = []
+    @servers.each_with_index{|s, key|
+      host,port = *s
+      if ping(host,port)
+        newserver << [host, port]
+      end
+    }
+    @servers = newserver
+    host, port = @servers.first
+    @tsvrpc = Tsvrpc.new(host, port)
   end
 
   def get(key)
@@ -193,5 +209,19 @@ class KyotoTycoon
     res = @tsvrpc.request(path, params, @agent, @colenc)
     @logger.info("#{path}: #{res[:code]} with query parameters #{params.inspect}")
     res
+  end
+
+  def ping(host, port)
+    begin
+      timeout(@connect_timeout){
+        @logger.debug("connect check #{host}:#{port}")
+        rpc = Tsvrpc.new(host, port)
+        res = rpc.request('/rpc/echo', {'0' => '0'}, :skinny, :U)
+        @logger.debug(res)
+      }
+      true
+    rescue Timeout::Error
+      false
+    end
   end
 end
