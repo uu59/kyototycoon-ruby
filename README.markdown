@@ -20,28 +20,64 @@
 
     @kt = KyotoTycoon.new('remotehost', 12345) # connect any host, any port
     @kt.db = '*' # on memory, or DB file as KT known
-    @kt.logger = 'ktlib.log' # => logfile or such as STDERR
 
     # set/bulk_set/get/bulk_get uses msgpack. default as :default
     @kt.serializer = :msgpack
 
+    # KT library logging
+    logger = Logger.new(STDERR)
+    logger.level = Logger::WARN
+    @kt.logger = logger
+    # or you can use these:
+    # @kt.logger = 'ktlib.log'
+    # @kt.logger = STDOUT
+    # @kt.logger = Logger.new(STDOUT)
+
+    # HTTP agent
+    @kt.agent = :skinny # low-level socket communicate. a bit of faster than :nethttp(default). try benchmark/agent.rb
+
+    # standby server
+    @kt.connect_timeout = 0.5 # => wait 0.5 sec for connection open
+    @kt.add_server('server2', 1978) # standby server that will use when primary server (a.k.a. KT#new(host, port)) is dead.
+    @kt.add_server('server3', 1978) # same as above
+
+    # get/set
     @kt.set('foo', 42, 100) # => expire at 100 seconds after
     @kt['foo'] # => 42. it is interger by msgpack serializer works
-    @kt.increment('bar') # => 1
-    @kt.increment('bar') # => 2
-    @kt.increment('bar', 10) # => 12
 
-    # it can store when msgpack using.
-    @kt['baz'] = {'a' => 'a', 'b' => 'b}
-    @kt['baz'] # => {'a' => 'a', 'b' => 'b}
+    # delete all record
+    @kt.clear
 
-    @kt.clear # delete all record
+    # bulk set/get
     @kt.set_bulk({
       'foo' => 'foo',
       'bar' => 'bar',
     })
     @kt.get_bulk([:foo, 'bar']) # => {'_foo' => 'foo', '_bar' => 'bar', 'num' => '2'}
     @kt.remove_bulk([:foo, :bar])
+
+    # it can store when msgpack using.
+    @kt['baz'] = {'a' => 'a', 'b' => 'b}
+    @kt['baz'] # => {'a' => 'a', 'b' => 'b}
+
+    # increment
+    @kt.increment('bar') # => 1
+    @kt.increment('bar') # => 2
+    @kt.increment('bar', 10) # => 12
+    @kt.increment('bar', -5) # => 7
+
+    # delete keys
+    @kt.delete(:foo, :bar, :baz)
+
+    # prefix keys
+    @kt.match_prefix('fo') # => all start with 'fo' keys
+    @kt.match_regex('^fo') # => save as above
+    @kt.match_regex(/^fo/) # => save as above
+
+    # reporting / statistics
+    p @kt.report
+    p @kt.status
+    all_record_count = @kt.status['count']
 
 # Requirements
 

@@ -17,11 +17,10 @@ describe do
   end
 
   it 'should handle multi servers' do
-    kt = KyotoTycoon.new('8.8.8.8', 11111)
-    kt.db='*'
+    kt = KyotoTycoon.new('example.com', 11111)
     kt.connect_timeout = 0.1
     kt.add_server('0.0.0.0', 1978)
-    kt.add_server('example.com', 1978)
+    kt.add_server('example.net', 1978)
     kt['foo'] = 'bar'
     kt[:foo].should == 'bar'
   end
@@ -90,6 +89,7 @@ describe do
     @kt.increment('foo').should == 2
     @kt.increment('foo').should == 3
     @kt.increment('foo', 10).should == 13
+    @kt.increment('foo', -10).should == 3
   end
 
   it 'should provide status/report' do
