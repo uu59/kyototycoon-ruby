@@ -3,6 +3,7 @@
 require "logger"
 require "cgi"
 require "socket"
+require "base64"
 require "net/http"
 require "kyoto_tycoon/serializer.rb"
 require "kyoto_tycoon/serializer/default.rb"
@@ -12,6 +13,7 @@ require "kyoto_tycoon/tsvrpc/nethttp.rb"
 
 class KyotoTycoon
   attr_reader :tsvrpc
+  attr_accessor :colenc
 
   def initialize(host='0.0.0.0', port=1978)
     @host = host
@@ -20,6 +22,7 @@ class KyotoTycoon
     @tsvrpc = Tsvrpc.new(@host, @port)
     @logger = Logger.new(nil)
     @agent = :nethttp
+    @colenc = :U
   end
 
   def serializer= (adaptor=:default)
@@ -187,7 +190,7 @@ class KyotoTycoon
       params ||= {}
       params[:DB] = @db
     end
-    res = @tsvrpc.request(path, params, @agent)
+    res = @tsvrpc.request(path, params, @agent, @colenc)
     @logger.info("#{path}: #{res[:code]} with query parameters #{params.inspect}")
     res
   end

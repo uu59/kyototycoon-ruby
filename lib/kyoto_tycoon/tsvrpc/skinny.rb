@@ -7,17 +7,16 @@ class KyotoTycoon
         @host = host
         @port = port
         @tpl = ""
-        @tpl << "POST %s HTTP/1.1\r\n"
-        @tpl << "Content-Type: application/x-www-form-urlencoded\r\n"
+        @tpl << "POST %s HTTP/1.0\r\n"
         @tpl << "Content-Length: %d\r\n"
-        @tpl << "Connection: close\r\n"
+        @tpl << "Content-Type: text/tab-separated-values; colenc=%s\r\n"
         @tpl << "\r\n%s"
       end
 
-      def request(path, params)
+      def request(path, params, colenc)
         sock ||= ::TCPSocket.new(@host, @port)
-        query = KyotoTycoon::Tsvrpc.build_query(params)
-        request = @tpl % [path, query.bytesize, query]
+        query = KyotoTycoon::Tsvrpc.build_query(params, colenc)
+        request = @tpl % [path, query.bytesize, colenc, query]
         sock.write(request)
         status = sock.gets[9, 3]
         bodylen = 0

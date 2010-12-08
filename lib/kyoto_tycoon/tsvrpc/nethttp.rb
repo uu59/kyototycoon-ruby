@@ -11,14 +11,14 @@ class KyotoTycoon
         @http ||= ::Net::HTTP.new(@host, @port)
       end
 
-      def request(path, params)
-        query = KyotoTycoon::Tsvrpc.build_query(params)
+      def request(path, params, colenc)
+        query = KyotoTycoon::Tsvrpc.build_query(params, colenc)
         req = Net::HTTP::Post.new(path)
         if query.length > 0
           req.body = query
           req['Content-Length'] = query.size
         end
-        req['Content-Type'] = "application/x-www-form-urlencoded"
+        req['Content-Type'] = "text/tab-separated-values; colenc=#{colenc}"
         req['Connection'] = "close"
         res = @http.request(req)
         [res.code.to_i, res.body]
