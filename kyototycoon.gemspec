@@ -16,23 +16,25 @@ Gem::Specification.new do |s|
     "README.markdown"
   ]
   s.files = [
+    "Gemfile",
+    "Gemfile.lock",
     "MIT-LICENSE",
     "README.markdown",
+    "Rakefile",
     "VERSION",
     "benchmark/agent.rb",
     "benchmark/bulk.rb",
     "benchmark/bulk_bigdata.rb",
     "benchmark/getset.rb",
     "benchmark/getset_while_1sec.rb",
-    "lib/kyoto_tycoon.rb",
-    "lib/kyoto_tycoon/serializer.rb",
-    "lib/kyoto_tycoon/serializer/default.rb",
-    "lib/kyoto_tycoon/serializer/json.rb",
-    "lib/kyoto_tycoon/serializer/msgpack.rb",
-    "lib/kyoto_tycoon/serializer/msgpackgzip.rb",
-    "lib/kyoto_tycoon/tsvrpc.rb",
-    "lib/kyoto_tycoon/tsvrpc/nethttp.rb",
-    "lib/kyoto_tycoon/tsvrpc/skinny.rb",
+    "kyototycoon.gemspec",
+    "lib/kyototycoon.rb",
+    "lib/kyototycoon/serializer.rb",
+    "lib/kyototycoon/serializer/default.rb",
+    "lib/kyototycoon/serializer/msgpack.rb",
+    "lib/kyototycoon/tsvrpc.rb",
+    "lib/kyototycoon/tsvrpc/nethttp.rb",
+    "lib/kyototycoon/tsvrpc/skinny.rb",
     "spec/helper.rb"
   ]
   s.homepage = %q{http://github.com/uu59/kyototycoon-ruby}
