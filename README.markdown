@@ -1,3 +1,7 @@
+# Install
+
+    $ gem install kyototycoon
+
 # Example
 
 ## Simple case
