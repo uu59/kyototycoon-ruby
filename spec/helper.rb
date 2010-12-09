@@ -17,10 +17,10 @@ describe do
   end
 
   it 'should handle multi servers' do
-    kt = KyotoTycoon.new('example.com', 11111)
+    kt = KyotoTycoon.new('www.example.com', 11111)
     kt.connect_timeout = 0.1
-    kt.add_server('0.0.0.0', 1978)
-    kt.add_server('example.net', 1978)
+    kt.servers << ['example.net', 1978]
+    kt.servers << ['0.0.0.0', 1978]
     kt['foo'] = 'bar'
     kt[:foo].should == 'bar'
   end

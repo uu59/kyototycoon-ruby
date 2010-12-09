@@ -12,15 +12,11 @@ require "kyoto_tycoon/tsvrpc/skinny.rb"
 require "kyoto_tycoon/tsvrpc/nethttp.rb"
 
 class KyotoTycoon
-  attr_reader :tsvrpc
-  attr_accessor :colenc, :connect_timeout
+  attr_accessor :colenc, :connect_timeout, :servers
 
   def initialize(host='0.0.0.0', port=1978)
-    @host = host
-    @port = port
-    @servers = [[@host, @port]]
+    @servers = [[host, port]]
     @serializer = KyotoTycoon::Serializer::Default
-    @tsvrpc = Tsvrpc.new(@host, @port)
     @logger = Logger.new(nil)
     @agent = :nethttp
     @colenc = :U
@@ -45,20 +41,6 @@ class KyotoTycoon
 
   def agent=(agent)
     @agent = agent
-  end
-
-  def add_server(host, port)
-    @servers << [host, port]
-    newserver = []
-    @servers.each_with_index{|s, key|
-      host,port = *s
-      if ping(host,port)
-        newserver << [host, port]
-      end
-    }
-    @servers = newserver
-    host, port = @servers.first
-    @tsvrpc = Tsvrpc.new(host, port)
   end
 
   def get(key)
@@ -206,6 +188,24 @@ class KyotoTycoon
       params ||= {}
       params[:DB] = @db
     end
+    if @servers.length > 1
+      @servers.each{|s|
+        host,port = *s
+        if ping(host, port)
+          @servers = [[host, port]]
+          break
+        end
+      }
+    end
+    if @servers.length == 0
+      msg = "alived server not exists"
+      @logger.crit(msg)
+      raise msg
+    end
+    @tsvrpc ||= begin
+      host, port = *@servers.first
+      Tsvrpc.new(host, port)
+    end
     res = @tsvrpc.request(path, params, @agent, @colenc)
     @logger.info("#{path}: #{res[:code]} with query parameters #{params.inspect}")
     res
@@ -220,7 +220,12 @@ class KyotoTycoon
         @logger.debug(res)
       }
       true
-    rescue Timeout::Error
+    rescue Timeout::Error => ex
+      # Ruby 1.8.7 compatible
+      @logger.warn("connect failed at #{host}:#{port}")
+      false
+    rescue => ex
+      @logger.warn("connect failed at #{host}:#{port}")
       false
     end
   end

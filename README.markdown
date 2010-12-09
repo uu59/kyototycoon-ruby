@@ -38,8 +38,8 @@
 
     # standby server
     @kt.connect_timeout = 0.5 # => wait 0.5 sec for connection open
-    @kt.add_server('server2', 1978) # standby server that will use when primary server (a.k.a. KT#new(host, port)) is dead.
-    @kt.add_server('server3', 1978) # same as above
+    @kt.servers << ['server2', 1978] # standby server that will use when primary server (a.k.a. KT#new(host, port)) is dead.
+    @kt.servers << ['server3', 1978] # same as above
 
     # get/set
     @kt.set('foo', 42, 100) # => expire at 100 seconds after
