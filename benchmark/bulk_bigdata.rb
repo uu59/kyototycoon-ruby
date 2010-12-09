@@ -3,7 +3,7 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require "rubygems"
 require "benchmark"
-require 'kyoto_tycoon.rb'
+require 'kyototycoon.rb'
 
 kt = KyotoTycoon.new
 bulk={}

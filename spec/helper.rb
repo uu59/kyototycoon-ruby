@@ -2,7 +2,7 @@
 
 $LOAD_PATH.unshift(File.dirname(__FILE__) + "/../lib")
 require "rubygems"
-require "kyoto_tycoon.rb"
+require "kyototycoon.rb"
 
 describe do
   before(:all) do

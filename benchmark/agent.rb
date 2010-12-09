@@ -3,7 +3,7 @@
 require "rubygems"
 require "benchmark"
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'kyoto_tycoon.rb'
+require 'kyototycoon.rb'
 
 kt = KyotoTycoon.new
 job = lambda {|kt|

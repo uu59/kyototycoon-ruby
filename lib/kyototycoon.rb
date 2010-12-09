@@ -5,11 +5,11 @@ require "cgi"
 require "socket"
 require "base64"
 require "net/http"
-require "kyoto_tycoon/serializer.rb"
-require "kyoto_tycoon/serializer/default.rb"
-require "kyoto_tycoon/tsvrpc.rb"
-require "kyoto_tycoon/tsvrpc/skinny.rb"
-require "kyoto_tycoon/tsvrpc/nethttp.rb"
+require "kyototycoon/serializer.rb"
+require "kyototycoon/serializer/default.rb"
+require "kyototycoon/tsvrpc.rb"
+require "kyototycoon/tsvrpc/skinny.rb"
+require "kyototycoon/tsvrpc/nethttp.rb"
 
 class KyotoTycoon
   attr_accessor :colenc, :connect_timeout, :servers
