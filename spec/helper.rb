@@ -66,6 +66,14 @@ describe do
     @kt.get_bulk(data.keys).should == {'num' => '0'}
   end
 
+  it 'should can handle strange key/value' do
+    # '+' is known ambiguity key on URL encode/decode processing
+    %w!a\tb a\nb a\r\nb a*-b a^@b!.each{|outlaw|
+      @kt[outlaw] = outlaw
+      @kt[outlaw].should == outlaw
+    }
+  end
+
   it 'should provide delete variation' do
     build = lambda {|kt|
       kt.clear
