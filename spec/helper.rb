@@ -1,12 +1,23 @@
 # -- coding: utf-8
 
+=begin
+
+!!!!!!!!!!!!!
+!! CAUTION !!
+!!!!!!!!!!!!!
+
+This script access http://0.0.0.0:19999/ and destroy all records.
+Be carefully for run, and run `ktserver -port 19999 '*'` before testing.
+
+=end
+
 $LOAD_PATH.unshift(File.dirname(__FILE__) + "/../lib")
 require "rubygems"
 require "kyototycoon.rb"
 
 describe do
   before(:all) do
-    @kt = KyotoTycoon.new
+    @kt = KyotoTycoon.new('0.0.0.0', 19999)
     @kt.serializer=:default # or :msgpack
     @kt.logger=nil
   end
@@ -19,7 +30,7 @@ describe do
     kt = KyotoTycoon.new('www.example.com', 11111)
     kt.connect_timeout = 0.1
     kt.servers << ['example.net', 1978]
-    kt.servers << ['0.0.0.0', 1978]
+    kt.servers << ['0.0.0.0', 19999]
     kt['foo'] = 'bar'
     kt[:foo].should == 'bar'
   end
