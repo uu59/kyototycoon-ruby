@@ -207,7 +207,7 @@ class KyotoTycoon
       Tsvrpc.new(host, port)
     end
     res = @tsvrpc.request(path, params, @agent, @colenc)
-    @logger.info("#{path}: #{res[:code]} with query parameters #{params.inspect}")
+    @logger.info("#{path}: #{res[:status]} with query parameters #{params.inspect}")
     res
   end
 
