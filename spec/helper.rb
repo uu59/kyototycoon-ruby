@@ -8,7 +8,6 @@ describe do
   before(:all) do
     @kt = KyotoTycoon.new
     @kt.serializer=:default # or :msgpack
-    @kt.db='*' # in memory
     @kt.logger=nil
   end
 
