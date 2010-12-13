@@ -108,6 +108,9 @@ describe do
     @kt.increment('foo').should == 3
     @kt.increment('foo', 10).should == 13
     @kt.increment('foo', -10).should == 3
+    @kt.decrement('foo', 5).should == -2
+    @kt.incr('foo', 5).should == 3
+    @kt.decr('foo', 5).should == -2
   end
 
   it 'should provide status/report' do

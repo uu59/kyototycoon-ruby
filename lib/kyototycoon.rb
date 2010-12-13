@@ -106,6 +106,12 @@ class KyotoTycoon
     res = request('/rpc/increment', {:key => key, :num => num, :xt => xt})
     Tsvrpc.parse(res[:body])['num'].to_i
   end
+  alias_method :incr, :increment
+
+  def decrement(key, num=1, xt=nil)
+    increment(key, num * -1, xt)
+  end
+  alias_method :decr, :decrement
 
   def increment_double(key, num, xt=nil)
     res = request('/rpc/increment_double', {:key => key, :num => num, :xt => xt})
