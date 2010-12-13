@@ -15,24 +15,29 @@ class KyotoTycoon
   attr_accessor :colenc, :connect_timeout, :servers
   attr_reader :serializer, :logger, :db
 
-  def self.configure(name, &block)
+  DEFAULT_HOST = '0.0.0.0'
+  DEFAULT_PORT = 1978
+
+  def self.configure(name, host=DEFAULT_HOST, port=DEFAULT_PORT, &block)
     @configure ||= {}
     if @configure[name]
       raise "'#{name}' is registered"
     end
-    @configure[name] = block
+    @configure[name] = lambda{
+      kt = KyotoTycoon.new(host, port)
+      block.call(kt)
+      kt
+    }
   end
   
   def self.create(name)
     if @configure[name].nil?
       raise "undefined configure: '#{name}'"
     end
-    kt = new
-    @configure[name].call(kt)
-    kt
+    @configure[name].call
   end
 
-  def initialize(host='0.0.0.0', port=1978)
+  def initialize(host=DEFAULT_HOST, port=DEFAULT_PORT)
     @servers = [[host, port]]
     @serializer = KyotoTycoon::Serializer::Default
     @logger = Logger.new(nil)

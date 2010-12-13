@@ -140,9 +140,16 @@ describe do
       kt.serializer = :msgpack
       kt.db = 'foobar'
     end
-    kt = KyotoTycoon.create(:test)
-    kt.logger.should == logger
-    kt.serializer.should == KyotoTycoon::Serializer::Msgpack
-    kt.db.should == 'foobar'
+    KyotoTycoon.configure(:test2, 'host', 1999) do |kt|
+      kt.logger = logger
+      kt.serializer = :msgpack
+      kt.db = 'foobar'
+    end
+    %w!test test2!.each{|name|
+      kt = KyotoTycoon.create(name.to_sym)
+      kt.logger.should == logger
+      kt.serializer.should == KyotoTycoon::Serializer::Msgpack
+      kt.db.should == 'foobar'
+    }
   end
 end
