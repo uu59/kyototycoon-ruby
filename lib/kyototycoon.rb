@@ -13,6 +13,24 @@ require "kyototycoon/tsvrpc/nethttp.rb"
 
 class KyotoTycoon
   attr_accessor :colenc, :connect_timeout, :servers
+  attr_reader :serializer, :logger, :db
+
+  def self.configure(name, &block)
+    @configure ||= {}
+    if @configure[name]
+      raise "'#{name}' is registered"
+    end
+    @configure[name] = block
+  end
+  
+  def self.create(name)
+    if @configure[name].nil?
+      raise "undefined configure: '#{name}'"
+    end
+    kt = new
+    @configure[name].call(kt)
+    kt
+  end
 
   def initialize(host='0.0.0.0', port=1978)
     @servers = [[host, port]]

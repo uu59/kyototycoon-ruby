@@ -129,4 +129,17 @@ describe do
     @kt.match_regex(/^12/).sort.should == %w!123 124 125!.sort
     @kt.match_regex(/^9+$/).sort.should == %w!999 9999!.sort
   end
+
+  it 'should configure/create method works' do
+    logger = Logger.new(STDOUT)
+    KyotoTycoon.configure(:test) do |kt|
+      kt.logger = logger
+      kt.serializer = :msgpack
+      kt.db = 'foobar'
+    end
+    kt = KyotoTycoon.create(:test)
+    kt.logger.should == logger
+    kt.serializer.should == KyotoTycoon::Serializer::Msgpack
+    kt.db.should == 'foobar'
+  end
 end
