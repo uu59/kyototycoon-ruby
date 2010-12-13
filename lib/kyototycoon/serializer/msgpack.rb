@@ -1,7 +1,10 @@
 # -- coding: utf-8
 
 require "rubygems"
-require "msgpack"
+begin
+  require "msgpack"
+rescue LoadError
+end
 
 class KyotoTycoon
   module Serializer
