@@ -220,11 +220,11 @@ class KyotoTycoon
       @logger.crit(msg)
       raise msg
     end
-    @tsvrpc ||= begin
+    tsvrpc ||= begin
       host, port = *@servers.first
       Tsvrpc.new(host, port)
     end
-    res = @tsvrpc.request(path, params, @agent, @colenc)
+    res = tsvrpc.request(path, params, @agent, @colenc)
     @logger.info("#{path}: #{res[:status]} with query parameters #{params.inspect}")
     res
   end
