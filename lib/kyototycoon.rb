@@ -12,6 +12,8 @@ require "kyototycoon/tsvrpc.rb"
 require "kyototycoon/tsvrpc/skinny.rb"
 
 class KyotoTycoon
+  VERSION = '0.5.0'
+
   attr_accessor :colenc, :connect_timeout, :servers
   attr_reader :serializer, :logger, :db
 

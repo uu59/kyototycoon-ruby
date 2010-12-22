@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{kyototycoon}
-  s.version = "0.1.2"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["uu59"]
-  s.date = %q{2010-12-09}
+  s.date = %q{2010-12-22}
   s.description = %q{KyotoTycoon client for Ruby}
   s.email = %q{a@tt25.org}
   s.extra_rdoc_files = [
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
     "README.markdown",
     "Rakefile",
     "VERSION",
-    "benchmark/agent.rb",
+    "benchmark/helper.rb",
     "benchmark/bulk.rb",
     "benchmark/bulk_bigdata.rb",
     "benchmark/getset.rb",
@@ -33,7 +33,6 @@ Gem::Specification.new do |s|
     "lib/kyototycoon/serializer/default.rb",
     "lib/kyototycoon/serializer/msgpack.rb",
     "lib/kyototycoon/tsvrpc.rb",
-    "lib/kyototycoon/tsvrpc/nethttp.rb",
     "lib/kyototycoon/tsvrpc/skinny.rb",
     "spec/helper.rb"
   ]
