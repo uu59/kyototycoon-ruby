@@ -41,7 +41,7 @@ class KyotoTycoon
     @servers = [[host, port]]
     @serializer = KyotoTycoon::Serializer::Default
     @logger = Logger.new(nil)
-    @colenc = :U
+    @colenc = :B
     @connect_timeout = 0.5
   end
 
