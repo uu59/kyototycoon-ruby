@@ -1,3 +1,12 @@
+KyotoTycoon client for Ruby.
+
+# Feature / Fixture
+
+* Always Keep-Alive connect (v0.5.0+)
+* You can choise key/value encoding from URI or Base64
+* You can use MessagePack tranparency
+* Benchmark scripts appended(they are connect to localhost:19999)
+
 # Install
 
     $ gem install kyototycoon
@@ -6,7 +15,7 @@
 
 ## Simple case
 
-    @kt = KyotoTycoon.new
+    @kt = KyotoTycoon.new('localhost', 1978)
 
     # traditional style
     @kt.set('foo', 123)
@@ -21,9 +30,18 @@
 
 
 ## Complex case
+    # KT#configure for instance setting store.
 
-    @kt = KyotoTycoon.new('remotehost', 12345) # connect any host, any port
-    @kt.db = '*' # on memory, or DB file as KT known
+    KyotoTycoon.configure(:generic) do |kt|
+      kt.db = '*' # on memory
+    end
+
+    # connect any host, any port
+    KyotoTycoon.configure(:favicon, 'remotehost', 12345) do |kt|
+      kt.db = 'favicons.kch' # DB file as KT known
+    end
+
+    @kt = KyotoTycoon.create(:generic) # got KT instance by KT#configure(:generic) rules
 
     # set/bulk_set/get/bulk_get uses msgpack. default as :default
     @kt.serializer = :msgpack
@@ -37,13 +55,13 @@
     # @kt.logger = STDOUT
     # @kt.logger = Logger.new(STDOUT)
 
-    # HTTP agent
-    @kt.agent = :skinny # low-level socket communicate. a bit of faster than :nethttp(default). try benchmark/agent.rb
-
     # standby server
     @kt.connect_timeout = 0.5 # => wait 0.5 sec for connection open
     @kt.servers << ['server2', 1978] # standby server that will use when primary server (a.k.a. KT#new(host, port)) is dead.
     @kt.servers << ['server3', 1978] # same as above
+
+    # key/value encoding from :U or :B(default). default as base64 because it seems better than URL encode for me.
+    @kt.colenc = :U
 
     # get/set
     @kt.set('foo', 42, 100) # => expire at 100 seconds after
@@ -61,7 +79,7 @@
     @kt.remove_bulk([:foo, :bar])
 
     # it can store when msgpack using.
-    @kt['baz'] = {'a' => 'a', 'b' => 'b}
+    @kt['baz'] = {'a' => 'a', 'b' => 'b'}
     @kt['baz'] # => {'a' => 'a', 'b' => 'b}
 
     # increment
@@ -69,6 +87,10 @@
     @kt.increment('bar') # => 2
     @kt.increment('bar', 10) # => 12
     @kt.increment('bar', -5) # => 7
+
+    # shorthand
+    @kt.incr('foo') # => 1
+    @kt.decr('foo') # => 0
 
     # delete keys
     @kt.delete(:foo, :bar, :baz)
