@@ -1,11 +1,7 @@
 # -- coding: utf-8
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require "rubygems"
-require "benchmark"
-require 'kyototycoon.rb'
+require File.expand_path("#{File.dirname(__FILE__)}/helper.rb")
 
-kt = KyotoTycoon.new
 bulk={}
 str = "string ああ" * 10000
 100.times.map{|n|
@@ -16,13 +12,4 @@ job = lambda {|kt|
   kt.get_bulk(bulk.keys)
   kt.clear
 }
-Benchmark.bm do |x|
-  x.report('default') {
-    kt.serializer=:default
-    job.call(kt)
-  }
-  x.report('msgpack') {
-    kt.serializer=:msgpack
-    job.call(kt)
-  }
-end
+benchmark(job)

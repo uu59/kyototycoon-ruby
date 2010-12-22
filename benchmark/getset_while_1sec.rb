@@ -1,10 +1,6 @@
 # -- coding: utf-8
 
-require "rubygems"
-require "benchmark"
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require "msgpack"
-require 'kyototycoon.rb'
+require File.expand_path("#{File.dirname(__FILE__)}/helper.rb")
 
 job = lambda {|kt|
   cnt = 0
@@ -22,12 +18,4 @@ job = lambda {|kt|
   cnt
 }
 
-kt = KyotoTycoon.new
-
-%w"nethttp skinny".each{|agent|
-  %w!default msgpack!.each{|serializer|
-    kt.agent = agent.to_sym
-    kt.serializer = serializer.to_sym
-    puts "#{agent}/#{serializer}: #{job.call(kt)}"
-  }
-}
+benchmark(job)
