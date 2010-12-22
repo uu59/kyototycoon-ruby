@@ -23,6 +23,9 @@ describe do
   end
 
   before(:each) do
+  end
+
+  after(:each) do
     @kt.clear
   end
 

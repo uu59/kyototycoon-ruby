@@ -10,7 +10,6 @@ require "kyototycoon/serializer/default.rb"
 require "kyototycoon/serializer/msgpack.rb"
 require "kyototycoon/tsvrpc.rb"
 require "kyototycoon/tsvrpc/skinny.rb"
-require "kyototycoon/tsvrpc/nethttp.rb"
 
 class KyotoTycoon
   attr_accessor :colenc, :connect_timeout, :servers
@@ -42,7 +41,6 @@ class KyotoTycoon
     @servers = [[host, port]]
     @serializer = KyotoTycoon::Serializer::Default
     @logger = Logger.new(nil)
-    @agent = :nethttp
     @colenc = :U
     @connect_timeout = 0.5
   end
@@ -61,10 +59,6 @@ class KyotoTycoon
       logger = Logger.new(logger)
     end
     @logger = logger
-  end
-
-  def agent=(agent)
-    @agent = agent
   end
 
   def get(key)
@@ -218,6 +212,56 @@ class KyotoTycoon
       params ||= {}
       params[:DB] = @db
     end
+
+    status,body = client.request(path, params, @colenc)
+    if ![200, 450].include?(status.to_i)
+      raise body
+    end
+    res = {:status => status, :body => body}
+    @logger.info("#{path}: #{res[:status]} with query parameters #{params.inspect}")
+    res
+  end
+
+  def client
+    host, port = *choice_server
+    @client ||= begin
+      Tsvrpc::Skinny.new(host, port)
+    end
+  end
+
+  def start
+    client.start
+  end
+
+  def finish
+    client.finish
+  end
+
+  private
+
+  def ping(host, port)
+    begin
+      rpc = Tsvrpc::Skinny.new(host, port)
+      timeout(@connect_timeout){
+        @logger.debug("connect check #{host}:#{port}")
+        res = rpc.request('/rpc/echo', {'0' => '0'}, :U)
+        @logger.debug(res)
+      }
+      true
+    rescue Timeout::Error => ex
+      # Ruby 1.8.7 compatible
+      @logger.warn("connect failed at #{host}:#{port}")
+      false
+    rescue => ex
+      @logger.warn("connect failed at #{host}:#{port}")
+      false
+    ensure
+      rpc.finish
+    end
+  end
+
+  def choice_server
+    current = @servers.first
     if @servers.length > 1
       @servers.each{|s|
         host,port = *s
@@ -232,31 +276,11 @@ class KyotoTycoon
       @logger.crit(msg)
       raise msg
     end
-    tsvrpc ||= begin
-      host, port = *@servers.first
-      Tsvrpc.new(host, port)
+    result = @servers.first
+    if current != result
+      @client = nil
     end
-    res = tsvrpc.request(path, params, @agent, @colenc)
-    @logger.info("#{path}: #{res[:status]} with query parameters #{params.inspect}")
-    res
+    result
   end
 
-  def ping(host, port)
-    begin
-      timeout(@connect_timeout){
-        @logger.debug("connect check #{host}:#{port}")
-        rpc = Tsvrpc.new(host, port)
-        res = rpc.request('/rpc/echo', {'0' => '0'}, :skinny, :U)
-        @logger.debug(res)
-      }
-      true
-    rescue Timeout::Error => ex
-      # Ruby 1.8.7 compatible
-      @logger.warn("connect failed at #{host}:#{port}")
-      false
-    rescue => ex
-      @logger.warn("connect failed at #{host}:#{port}")
-      false
-    end
-  end
 end

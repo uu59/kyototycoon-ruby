@@ -2,29 +2,7 @@
 
 
 class KyotoTycoon
-  class Tsvrpc
-    def initialize(host, port)
-      @host = host
-      @port = port
-    end
-
-    def http(agent)
-      case agent
-        when :skinny
-          Skinny.new(@host, @port)
-        else
-          Nethttp.new(@host, @port)
-      end
-    end
-
-    def request(path, params, agent, colenc)
-      status,body = *http(agent).request(path, params, colenc)
-      if ![200, 450].include?(status)
-        raise body
-      end
-      {:status => status, :body => body}
-    end
-
+  module Tsvrpc
     def self.parse(body)
       body.split("\n").inject({}){|r, line|
         k,v = *line.split("\t", 2).map{|v| CGI.unescape(v)}
