@@ -252,6 +252,9 @@ class KyotoTycoon
       # Ruby 1.8.7 compatible
       @logger.warn("connect failed at #{host}:#{port}")
       false
+    rescue SystemCallError
+      @logger.warn("connect failed at #{host}:#{port}")
+      false
     rescue => ex
       @logger.warn("connect failed at #{host}:#{port}")
       false
