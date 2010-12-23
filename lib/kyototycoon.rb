@@ -41,6 +41,7 @@ class KyotoTycoon
 
   def initialize(host=DEFAULT_HOST, port=DEFAULT_PORT)
     @servers = [[host, port]]
+    @checked_servers = nil
     @serializer = KyotoTycoon::Serializer::Default
     @logger = Logger.new(nil)
     @colenc = :B
@@ -266,26 +267,23 @@ class KyotoTycoon
   end
 
   def choice_server
-    current = @servers.first
-    if @servers.length > 1
-      @servers.each{|s|
-        host,port = *s
-        if ping(host, port)
-          @servers = [[host, port]]
-          break
-        end
-      }
+    if @checked_servers
+      return @checked_servers
     end
-    if @servers.length == 0
+
+    @servers.each{|s|
+      host,port = *s
+      if ping(host, port)
+        @checked_servers = [host, port]
+        break
+      end
+    }
+    if @checked_servers.nil?
       msg = "alived server not exists"
       @logger.crit(msg)
       raise msg
     end
-    result = @servers.first
-    if current != result
-      @client = nil
-    end
-    result
+    @checked_servers
   end
 
 end
