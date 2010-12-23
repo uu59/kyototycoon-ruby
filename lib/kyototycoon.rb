@@ -10,9 +10,10 @@ require "kyototycoon/serializer/default.rb"
 require "kyototycoon/serializer/msgpack.rb"
 require "kyototycoon/tsvrpc.rb"
 require "kyototycoon/tsvrpc/skinny.rb"
+require "kyototycoon/stream.rb"
 
 class KyotoTycoon
-  VERSION = '0.5.0'
+  VERSION = '0.5.1'
 
   attr_accessor :colenc, :connect_timeout, :servers
   attr_reader :serializer, :logger, :db

@@ -5,36 +5,39 @@
 
 Gem::Specification.new do |s|
   s.name = %q{kyototycoon}
-  s.version = "0.5.0"
+  s.version = "0.5.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["uu59"]
-  s.date = %q{2010-12-22}
+  s.date = %q{2010-12-23}
   s.description = %q{KyotoTycoon client for Ruby}
   s.email = %q{a@tt25.org}
   s.extra_rdoc_files = [
     "README.markdown"
   ]
   s.files = [
+    "Changes.md",
     "Gemfile",
     "Gemfile.lock",
     "MIT-LICENSE",
     "README.markdown",
     "Rakefile",
     "VERSION",
-    "benchmark/helper.rb",
     "benchmark/bulk.rb",
     "benchmark/bulk_bigdata.rb",
     "benchmark/getset.rb",
     "benchmark/getset_while_1sec.rb",
+    "benchmark/helper.rb",
     "kyototycoon.gemspec",
     "lib/kyototycoon.rb",
     "lib/kyototycoon/serializer.rb",
     "lib/kyototycoon/serializer/default.rb",
     "lib/kyototycoon/serializer/msgpack.rb",
+    "lib/kyototycoon/stream.rb",
     "lib/kyototycoon/tsvrpc.rb",
     "lib/kyototycoon/tsvrpc/skinny.rb",
-    "spec/helper.rb"
+    "spec/helper.rb",
+    "spec/ktslave.txt"
   ]
   s.homepage = %q{http://github.com/uu59/kyototycoon-ruby}
   s.licenses = ["MIT"]

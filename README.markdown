@@ -109,6 +109,25 @@ KyotoTycoon client for Ruby.
 
 - msgpack(optional)
 
+# Other case
+
+    $ cat foo.rb
+    require "rubygems"
+    require "kyototycoon"
+
+    KyotoTycoon::Stream.run($stdin) do |line|
+      case line.cmd
+        when 'clear'
+          puts "all record cleared!"
+        when 'set'
+          puts "#{line.key} get #{line.value} value"
+        when 'remove'
+          puts "#{line.key} is removed at #{line.time.strftime('%Y-%m-%d %H:%M:%S')}"
+      end
+    end
+
+    $ ktremotemgr slave -uw | ruby foo.rb
+
 # Trap
 
 KyotoTycoon is based on HTTP so all variable types are become String.
