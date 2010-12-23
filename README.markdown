@@ -109,7 +109,7 @@ KyotoTycoon client for Ruby.
 
 - msgpack(optional)
 
-# Other case
+# Other case for `ktremotemgr slave | ...`
 
     $ cat foo.rb
     require "rubygems"

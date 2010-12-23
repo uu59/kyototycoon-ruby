@@ -1,3 +1,8 @@
+## v0.5.1
+
+* changing server dicision logic
+* added KT::Stream.run
+
 ## v0.5.0
 
 * Always Keep-Alive connection
