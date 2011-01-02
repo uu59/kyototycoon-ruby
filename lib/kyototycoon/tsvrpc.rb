@@ -35,5 +35,24 @@ class KyotoTycoon
       end
       query
     end
+
+    def self.decode_responce_body(body, colenc)
+      case colenc
+        when "B"
+          body.split("\n").map{|row|
+            row.split("\t").map{|col| Base64.decode64(col)}.join("\t")
+          }.join("\n")
+        when "U"
+          body.split("\n").map{|row|
+            row.split("\t").map{|col|
+              CGI.unescape(col)
+            }.join("\t")
+          }.join("\n")
+        when nil
+          body
+        else
+          raise "Unknown colenc(response) '#{colenc}'"
+      end
+    end
   end
 end

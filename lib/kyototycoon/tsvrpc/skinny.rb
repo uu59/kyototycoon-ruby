@@ -22,18 +22,25 @@ class KyotoTycoon
         status = first_line[9, 3]
         bodylen = 0
         body = ""
+        colenc = nil
         loop do
           line = @sock.gets
+          if line['Content-Type'] && line['colenc=']
+            colenc = line.match(/colenc=([A-Z])/).to_a[1]
+            next
+          end
+
           if line['Content-Length']
             bodylen = line.match(/[0-9]+/)[0].to_i
             next
           end
+
           if line == "\r\n"
             break
           end
         end
         body = @sock.read(bodylen)
-        [status.to_i, body]
+        [status.to_i, Tsvrpc.decode_responce_body(body, colenc)]
       end
 
       def start
