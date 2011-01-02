@@ -1,3 +1,8 @@
+## v0.5.2
+
+* fixed encoded response handling
+* fixed miss named method
+
 ## v0.5.1
 
 * changing server dicision logic

@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{kyototycoon}
-  s.version = "0.5.1"
+  s.version = "0.5.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["uu59"]
-  s.date = %q{2010-12-23}
+  s.date = %q{2011-01-03}
   s.description = %q{KyotoTycoon client for Ruby}
   s.email = %q{a@tt25.org}
   s.extra_rdoc_files = [
