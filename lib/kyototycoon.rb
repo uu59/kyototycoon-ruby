@@ -281,7 +281,7 @@ class KyotoTycoon
     }
     if @checked_servers.nil?
       msg = "alived server not exists"
-      @logger.crit(msg)
+      @logger.fatal(msg)
       raise msg
     end
     @checked_servers
