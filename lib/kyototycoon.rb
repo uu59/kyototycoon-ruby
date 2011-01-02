@@ -13,7 +13,7 @@ require "kyototycoon/tsvrpc/skinny.rb"
 require "kyototycoon/stream.rb"
 
 class KyotoTycoon
-  VERSION = '0.5.1'
+  VERSION = '0.5.2'
 
   attr_accessor :colenc, :connect_timeout, :servers
   attr_reader :serializer, :logger, :db
@@ -67,7 +67,7 @@ class KyotoTycoon
 
   def get(key)
     res = request('/rpc/get', {:key => key})
-    @serializer.decode(Tsvrpc.parse(res[:body])['value'])
+    @serializer.decode(Tsvrpc.parse(res[:body], res[:colenc])['value'])
   end
   alias_method :[], :get
 
@@ -78,18 +78,18 @@ class KyotoTycoon
 
   def set(key, value, xt=nil)
     res = request('/rpc/set', {:key => key, :value => @serializer.encode(value), :xt => xt})
-    Tsvrpc.parse(res[:body])
+    Tsvrpc.parse(res[:body], res[:colenc])
   end
   alias_method :[]=, :set
 
   def add(key, value, xt=nil)
     res = request('/rpc/add', {:key => key, :value => @serializer.encode(value), :xt => xt})
-    Tsvrpc.parse(res[:body])
+    Tsvrpc.parse(res[:body], res[:colenc])
   end
 
   def replace(key, value, xt=nil)
     res = request('/rpc/replace', {:key => key, :value => @serializer.encode(value), :xt => xt})
-    Tsvrpc.parse(res[:body])
+    Tsvrpc.parse(res[:body], res[:colenc])
   end
 
   def append(key, value, xt=nil)
@@ -108,7 +108,7 @@ class KyotoTycoon
 
   def increment(key, num=1, xt=nil)
     res = request('/rpc/increment', {:key => key, :num => num, :xt => xt})
-    Tsvrpc.parse(res[:body])['num'].to_i
+    Tsvrpc.parse(res[:body], res[:colenc])['num'].to_i
   end
   alias_method :incr, :increment
 
@@ -119,7 +119,7 @@ class KyotoTycoon
 
   def increment_double(key, num, xt=nil)
     res = request('/rpc/increment_double', {:key => key, :num => num, :xt => xt})
-    Tsvrpc.parse(res[:body])['num'].to_f
+    Tsvrpc.parse(res[:body], res[:colenc])['num'].to_f
   end
 
   def set_bulk(records)
@@ -129,7 +129,7 @@ class KyotoTycoon
       values["_#{k}"] = @serializer.encode(v)
     }
     res = request('/rpc/set_bulk', values)
-    Tsvrpc.parse(res[:body])
+    Tsvrpc.parse(res[:body], res[:colenc])
   end
 
   def get_bulk(keys)
@@ -139,7 +139,7 @@ class KyotoTycoon
     }
     res = request('/rpc/get_bulk', params)
     ret = {}
-    Tsvrpc.parse(res[:body]).each{|k,v|
+    Tsvrpc.parse(res[:body], res[:colenc]).each{|k,v|
       ret[k] = k.match(/^_/) ? @serializer.decode(v) : v
     }
     ret
@@ -151,7 +151,7 @@ class KyotoTycoon
       params
     }
     res = request('/rpc/remove_bulk', params)
-    Tsvrpc.parse(res[:body])
+    Tsvrpc.parse(res[:body], res[:colenc])
   end
 
   def clear
@@ -169,23 +169,23 @@ class KyotoTycoon
 
   def echo(value)
     res = request('/rpc/echo', value)
-    Tsvrpc.parse(res[:body])
+    Tsvrpc.parse(res[:body], res[:colenc])
   end
 
   def report
     res = request('/rpc/report')
-    Tsvrpc.parse(res[:body])
+    Tsvrpc.parse(res[:body], res[:colenc])
   end
 
   def status
     res = request('/rpc/status')
-    Tsvrpc.parse(res[:body])
+    Tsvrpc.parse(res[:body], res[:colenc])
   end
 
   def match_prefix(prefix)
     res = request('/rpc/match_prefix', {:prefix => prefix})
     keys = []
-    Tsvrpc.parse(res[:body]).each{|k,v|
+    Tsvrpc.parse(res[:body], res[:colenc]).each{|k,v|
       if k != 'num'
         keys << k[1, k.length]
       end
@@ -199,7 +199,7 @@ class KyotoTycoon
     end
     res = request('/rpc/match_regex', {:regex => re})
     keys = []
-    Tsvrpc.parse(res[:body]).each{|k,v|
+    Tsvrpc.parse(res[:body], res[:colenc]).each{|k,v|
       if k != 'num'
         keys << k[1, k.length]
       end
@@ -217,11 +217,11 @@ class KyotoTycoon
       params[:DB] = @db
     end
 
-    status,body = client.request(path, params, @colenc)
+    status,body,colenc = client.request(path, params, @colenc)
     if ![200, 450].include?(status.to_i)
       raise body
     end
-    res = {:status => status, :body => body}
+    res = {:status => status, :body => body, :colenc => colenc}
     @logger.info("#{path}: #{res[:status]} with query parameters #{params.inspect}")
     res
   end

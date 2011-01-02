@@ -3,9 +3,19 @@
 
 class KyotoTycoon
   module Tsvrpc
-    def self.parse(body)
+    def self.parse(body, colenc)
+      decoder = case colenc
+        when "B"
+          lambda{|body| Base64.decode64(body)}
+        when "U"
+          lambda{|body| CGI.unescape(body)}
+        when nil
+          lambda{|body| body}
+        else
+          raise "Unknown colenc(response) '#{colenc}'"
+      end
       body.split("\n").inject({}){|r, line|
-        k,v = *line.split("\t", 2).map{|v| CGI.unescape(v)}
+        k,v = *line.split("\t", 2).map{|v| decoder.call(v)}
         r[k] = v
         r
       }
@@ -34,25 +44,6 @@ class KyotoTycoon
         end
       end
       query
-    end
-
-    def self.decode_responce_body(body, colenc)
-      case colenc
-        when "B"
-          body.split("\n").map{|row|
-            row.split("\t").map{|col| Base64.decode64(col)}.join("\t")
-          }.join("\n")
-        when "U"
-          body.split("\n").map{|row|
-            row.split("\t").map{|col|
-              CGI.unescape(col)
-            }.join("\t")
-          }.join("\n")
-        when nil
-          body
-        else
-          raise "Unknown colenc(response) '#{colenc}'"
-      end
     end
   end
 end

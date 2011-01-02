@@ -40,7 +40,7 @@ class KyotoTycoon
           end
         end
         body = @sock.read(bodylen)
-        [status.to_i, Tsvrpc.decode_responce_body(body, colenc)]
+        [status.to_i, body, colenc]
       end
 
       def start
