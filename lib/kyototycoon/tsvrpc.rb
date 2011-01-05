@@ -5,10 +5,10 @@ class KyotoTycoon
   module Tsvrpc
     def self.parse(body, colenc)
       decoder = case colenc
-        when "B"
-          lambda{|body| Base64.decode64(body)}
         when "U"
           lambda{|body| CGI.unescape(body)}
+        when "B"
+          lambda{|body| Base64.decode64(body)}
         when nil
           lambda{|body| body}
         else
@@ -24,24 +24,20 @@ class KyotoTycoon
     def self.build_query(params, colenc='U')
       query = ""
       if params
-        case colenc.to_s.upcase.to_sym
+        encoder = case colenc.to_s.upcase.to_sym
           when :U
-            query = params.inject([]){|r, tmp|
-              unless tmp.last.nil?
-                r << tmp.map{|v| CGI.escape(v.to_s)}.join("\t")
-              end
-              r
-            }.join("\r\n")
+            lambda{|body| CGI.escape(body.to_s)}
           when :B
-            query = params.inject([]){|r, tmp|
-              unless tmp.last.nil?
-                r << tmp.map{|v| Base64.encode64(v.to_s).gsub("\n","")}.join("\t")
-              end
-              r
-            }.join("\r\n")
+            lambda{|body| [body.to_s].pack('m').gsub("\n","")}
           else
             raise "Unknown colenc '#{colenc}'"
         end
+        query = params.inject([]){|r, tmp|
+          unless tmp.last.nil?
+            r << tmp.map{|v| encoder.call(v)}.join("\t")
+          end
+          r
+        }.join("\r\n")
       end
       query
     end
