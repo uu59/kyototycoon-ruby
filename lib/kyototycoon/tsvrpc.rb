@@ -35,7 +35,7 @@ class KyotoTycoon
           when :B
             query = params.inject([]){|r, tmp|
               unless tmp.last.nil?
-                r << tmp.map{|v| Base64.encode64(v.to_s).rstrip}.join("\t")
+                r << tmp.map{|v| Base64.encode64(v.to_s).gsub("\n","")}.join("\t")
               end
               r
             }.join("\r\n")

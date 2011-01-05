@@ -64,6 +64,10 @@ describe do
     @kt[:a] = 1
     @kt[:b] = 1
     @kt.keys.sort.should == %w!a b!.sort
+    @kt.clear
+
+    @kt[:longvalue] = "-" * 2048
+    @kt[:longvalue].should == '-' * 2048
   end
 
   it 'should provide bulk' do
