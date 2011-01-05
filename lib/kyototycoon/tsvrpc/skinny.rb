@@ -44,6 +44,7 @@ class KyotoTycoon
       end
 
       def start
+        @sock = nil if @sock && @sock.closed?
         @sock ||= ::TCPSocket.new(@host, @port)
       end
 
