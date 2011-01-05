@@ -1,3 +1,8 @@
+## v0.5.3
+
+* fixed bug using base64 encoding
+* regenerate socket when that closed
+
 ## v0.5.2
 
 * fixed encoded response handling
