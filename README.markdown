@@ -2,6 +2,7 @@ KyotoTycoon client for Ruby.
 
 # Feature / Fixture
 
+* Usable console as `$ bin/kyototycoon-console -h localhost -p 1991` like a Sequel(v0.5.4+)
 * Always Keep-Alive connect (v0.5.0+)
 * You can choise key/value encoding from URI or Base64
 * You can use MessagePack tranparency
