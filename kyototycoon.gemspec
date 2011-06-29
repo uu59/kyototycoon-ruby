@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.date = %q{2011-06-29}
   s.default_executable = %q{kyototycoon-console}
   s.description = %q{KyotoTycoon client for Ruby}
-  s.email = %q{a@tt25.org}
+  s.email = %q{k@uu59.org}
   s.executables = ["kyototycoon-console"]
   s.extra_rdoc_files = [
     "README.markdown"
