@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+require "irb"
+require "optparse"
+require "rubygems"
+require File.expand_path('../lib/kyototycoon.rb', File.dirname(__FILE__))
+
+options = {
+  :host => 'localhost',
+  :port => 1978,
+}
+
+OptionParser.new do |opts|
+  opts.on('-h VAL', '--host=VAL', 'hostname'){|v| options[:host] = v}
+  opts.on('-p VAL', '--port=VAL', 'port numver'){|v| options[:port] = v}
+  opts.parse! ARGV
+end
+
+KT = KyotoTycoon.new(options[:host], options[:port])
+
+puts "="*30
+puts "You can use KyotoTycoon object for KT"
+puts "options are: #{options.inspect}"
+puts "="*30
+
+IRB.start
