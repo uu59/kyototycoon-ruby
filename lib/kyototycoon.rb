@@ -4,7 +4,7 @@ require "logger"
 require "cgi"
 require "socket"
 require "base64"
-require "net/http"
+require "timeout"
 require "kyototycoon/serializer.rb"
 require "kyototycoon/serializer/default.rb"
 require "kyototycoon/serializer/msgpack.rb"
@@ -263,6 +263,7 @@ class KyotoTycoon
       @logger.warn("connect failed at #{host}:#{port}")
       false
     ensure
+      # for 1.8.7
       rpc.finish
     end
   end
