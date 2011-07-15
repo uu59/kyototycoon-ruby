@@ -31,6 +31,12 @@ describe KyotoTycoon do
       kt.serializer.should == KyotoTycoon::Serializer::Msgpack
       kt.db.should == 'foobar'
     }
+    lambda { KyotoTycoon.configure(:test2) }.should raise_error(StandardError)
+    lambda { KyotoTycoon.create(:not_exists) }.should raise_error(StandardError)
+
+    KyotoTycoon.configures.length.should == 2
+    KyotoTycoon.configure_reset!
+    KyotoTycoon.configures.length.should == 0
   end
 
   it 'should handle `ktremotemgr slave`' do

@@ -32,6 +32,14 @@ class KyotoTycoon
       kt
     }
   end
+
+  def self.configures
+    @configure
+  end
+
+  def self.configure_reset!
+    @configure = {}
+  end
   
   def self.create(name)
     if @configure[name].nil?

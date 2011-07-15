@@ -22,6 +22,11 @@ describe KyotoTycoon do
             @kt['foo'].should == 'bar'
             @kt.delete('foo')
             @kt['foo'].should be_nil
+
+            @kt.add('123', '123')
+            @kt['123'].should == '123'
+            @kt.replace('123', '456')
+            @kt['123'].should == '456'
             @kt.clear
             @kt.report['db_total_count'].to_i.should == 0
             @kt.status['count'].to_i.should == 0
