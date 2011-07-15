@@ -11,6 +11,11 @@ Be carefully for run, and run `ktserver -port 19999 '*'` before testing.
 
 =end
 
+unless ENV["COV"].nil?
+  require "simplecov"
+  SimpleCov.start
+end
+
 $LOAD_PATH.unshift(File.dirname(__FILE__) + "/../lib")
 require "rubygems"
 require "kyototycoon.rb"
