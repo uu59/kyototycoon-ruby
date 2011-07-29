@@ -13,7 +13,7 @@ require "kyototycoon/tsvrpc/skinny.rb"
 require "kyototycoon/stream.rb"
 
 class KyotoTycoon
-  VERSION = '0.5.5'
+  VERSION = '0.5.6'
 
   attr_accessor :colenc, :connect_timeout, :servers
   attr_reader :serializer, :logger, :db

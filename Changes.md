@@ -1,3 +1,7 @@
+## v0.5.6
+
+* fixed for ruby 1.8.7
+
 ## v0.5.5
 
 * fixed bulk methods. [Thanks rickyrobinson!](https://github.com/uu59/kyototycoon-ruby/pull/1/files)
