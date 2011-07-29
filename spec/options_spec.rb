@@ -53,16 +53,13 @@ describe KyotoTycoon do
 
           it 'should provide bulk' do
             data = {}
-            receive = {}
             10.times{|n|
               data[n.to_s] = n.to_s
-              receive["_#{n}"] = n.to_s
             }
-            receive['num'] = "10"
             @kt.set_bulk(data)
-            @kt.get_bulk(data.keys).sort.should == receive.sort
+            @kt.get_bulk(data.keys).sort.should == data.sort
             @kt.remove_bulk(data.keys)
-            @kt.get_bulk(data.keys).should == {'num' => '0'}
+            @kt.get_bulk(data.keys).should == {}
           end
 
           it 'should can handle strange key/value' do
