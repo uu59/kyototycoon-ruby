@@ -1,3 +1,11 @@
+## v0.5.5
+
+* fixed bulk methods. [Thanks rickyrobinson!](https://github.com/uu59/kyototycoon-ruby/pull/1/files)
+
+## v0.5.4
+
+* Added bin/kyototycoon-console. it's like as Sequel's `sequel` script
+
 ## v0.5.3
 
 * fixed bug using base64 encoding
