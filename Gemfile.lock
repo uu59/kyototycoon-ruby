@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kyototycoon (0.5.4)
+    kyototycoon (0.5.5)
       msgpack
 
 GEM
