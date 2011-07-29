@@ -11,43 +11,17 @@ Gem::Specification.new do |s|
   s.default_executable = %q{kyototycoon-console}
   s.description = %q{KyotoTycoon client for Ruby}
   s.email = %q{k@uu59.org}
-  s.executables = ["kyototycoon-console"]
   s.extra_rdoc_files = [
     "README.markdown"
   ]
-  s.files = [
-    "Changes.md",
-    "Gemfile",
-    "Gemfile.lock",
-    "MIT-LICENSE",
-    "README.markdown",
-    "Rakefile",
-    "VERSION",
-    "benchmark/bulk.rb",
-    "benchmark/bulk_bigdata.rb",
-    "benchmark/getset.rb",
-    "benchmark/getset_while_1sec.rb",
-    "benchmark/helper.rb",
-    "bin/kyototycoon-console",
-    "kyototycoon.gemspec",
-    "lib/kyototycoon.rb",
-    "lib/kyototycoon/serializer.rb",
-    "lib/kyototycoon/serializer/default.rb",
-    "lib/kyototycoon/serializer/msgpack.rb",
-    "lib/kyototycoon/stream.rb",
-    "lib/kyototycoon/tsvrpc.rb",
-    "lib/kyototycoon/tsvrpc/skinny.rb",
-    "spec/helper.rb",
-    "spec/ktslave.txt"
-  ]
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.homepage = %q{http://github.com/uu59/kyototycoon-ruby}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{KyotoTycoon client for Ruby}
-  s.test_files = [
-    "spec/helper.rb"
-  ]
 
   s.add_dependency(%q<msgpack>, [">= 0"])
 

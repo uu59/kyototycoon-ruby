@@ -134,7 +134,7 @@ class KyotoTycoon
     # records={'a' => 'aa', 'b' => 'bb'}
     values = {}
     records.each{|k,v|
-      values["_#{k}"] = @serializer.encode(v)
+      values[k.to_s.match(/^_/) ? k.to_s : "_#{k}"] = @serializer.encode(v)
     }
     res = request('/rpc/set_bulk', values)
     Tsvrpc.parse(res[:body], res[:colenc])
@@ -147,9 +147,15 @@ class KyotoTycoon
     }
     res = request('/rpc/get_bulk', params)
     ret = {}
-    Tsvrpc.parse(res[:body], res[:colenc]).each{|k,v|
-      ret[k] = k.match(/^_/) ? @serializer.decode(v) : v
-    }
+    bulk = Tsvrpc.parse(res[:body], res[:colenc])
+    bulk.delete("num")
+    bulk.delete("DB")
+    bulk.delete("ERROR")
+    ret = bulk.reduce({}) do |hash, (k,v)|
+      key = k.match(/^_/) ? k[1..-1] : k
+      hash[key] = @serializer.decode(v)
+      hash
+    end
     ret
   end
 
