@@ -148,9 +148,7 @@ class KyotoTycoon
     res = request('/rpc/get_bulk', params)
     ret = {}
     bulk = Tsvrpc.parse(res[:body], res[:colenc])
-    bulk.delete("num")
-    bulk.delete("DB")
-    bulk.delete("ERROR")
+    bulk.keep_if {|k,v| k.match(/^_/)}
     ret = bulk.reduce({}) do |hash, (k,v)|
       key = k.match(/^_/) ? k[1..-1] : k
       hash[key] = @serializer.decode(v)
