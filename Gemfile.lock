@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    kyototycoon (0.5.4)
+      msgpack
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -27,6 +33,6 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.0.0)
   jeweler (~> 1.5.1)
-  msgpack
+  kyototycoon!
   rspec (~> 2.1.0)
   simplecov
