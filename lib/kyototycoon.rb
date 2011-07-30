@@ -55,6 +55,7 @@ class KyotoTycoon
     @logger = Logger.new(nil)
     @colenc = :B
     @connect_timeout = 0.5
+    @cursor = 1
   end
 
   def serializer= (adaptor=:default)
@@ -159,6 +160,58 @@ class KyotoTycoon
       params
     }
     res = request('/rpc/remove_bulk', params)
+    Tsvrpc.parse(res[:body], res[:colenc])
+  end
+
+  def cur_jump(key=nil)
+    res = request('/rpc/cur_jump', {'CUR' => @cursor, 'key' => key})
+    ret = Tsvrpc.parse(res[:body], res[:colenc])
+  end
+
+  def cur_jump_back(key=nil)
+    res = request('/rpc/cur_jump_back', {'CUR' => @cursor, 'key' => key})
+    ret = Tsvrpc.parse(res[:body], res[:colenc])
+  end
+
+  def cur_step
+    res = request('/rpc/cur_step', {'CUR' => @cursor})
+    Tsvrpc.parse(res[:body], res[:colenc])
+  end
+
+  def cur_step_back
+    res = request('/rpc/cur_step_back', {'CUR' => @cursor})
+    Tsvrpc.parse(res[:body], res[:colenc])
+  end
+
+  def cur_set_value(value, xt=nil, step=nil)
+    res = request('/rpc/cur_set_value', {'CUR' => @cursor, 'value' => value, 'xt' => xt, 'step' => step})
+    Tsvrpc.parse(res[:body], res[:colenc])
+  end
+
+  def cur_get_key(step=nil)
+    res = request('/rpc/cur_get_key', {'CUR' => @cursor, 'step'=>step})
+    Tsvrpc.parse(res[:body], res[:colenc])["key"]
+  end
+
+  def cur_get_value(step=nil)
+    res = request('/rpc/cur_get_value', {'CUR' => @cursor, 'step'=>step})
+    Tsvrpc.parse(res[:body], res[:colenc])["value"]
+  end
+
+  def cur_get(xt=nil, step=nil)
+    res = request('/rpc/cur_get', {'CUR' => @cursor, 'step'=>step, 'xt' => xt})
+    ret = Tsvrpc.parse(res[:body], res[:colenc])
+    [ret["key"], ret["value"]]
+  end
+
+  def cur_seize(xt=nil)
+    res = request('/rpc/cur_seize', {'CUR' => @cursor, 'xt' => xt})
+    ret = Tsvrpc.parse(res[:body], res[:colenc])
+    [ret["key"], ret["value"]]
+  end
+
+  def cur_remove
+    res = request('/rpc/cur_remove', {'CUR' => @cursor})
     Tsvrpc.parse(res[:body], res[:colenc])
   end
 

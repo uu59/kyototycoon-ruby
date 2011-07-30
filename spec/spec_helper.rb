@@ -7,7 +7,7 @@
 !!!!!!!!!!!!!
 
 This script access http://0.0.0.0:19999/ and destroy all records.
-Be carefully for run, and run `ktserver -port 19999 '*'` before testing.
+Be carefully for run, and run `ktserver -port 19999 '%'` before testing.
 
 =end
 
