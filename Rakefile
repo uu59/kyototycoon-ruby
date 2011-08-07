@@ -9,42 +9,51 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
-require 'jeweler'
-Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "kyototycoon"
-  gem.homepage = "http://github.com/uu59/kyototycoon-ruby"
-  gem.license = "MIT"
-  gem.summary = %Q{KyotoTycoon client for Ruby}
-  gem.description = %Q{KyotoTycoon client for Ruby}
-  gem.email = "a@tt25.org"
-  gem.authors = ["uu59"]
-  # Include your dependencies below. Runtime dependencies are required when using your gem,
-  # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
-  #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
-  #  gem.add_development_dependency 'rspec', '> 1.2.3'
-end
-Jeweler::RubygemsDotOrgTasks.new
-
-require 'rspec/core'
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.pattern = FileList['spec/*.rb']
+def do_rspec(opts=["-c"])
+  system(*['rspec', opts, 'spec/'].flatten)
 end
 
-RSpec::Core::RakeTask.new(:rcov) do |spec|
-  spec.pattern = 'spec/**/*_spec.rb'
-  spec.rcov = true
+desc "run rspec"
+task :rspec do
+  do_rspec
+end
+namespace :rspec do
+  desc "run rspec with coverage"
+  task :cov do
+    ENV["COV"]="1"
+    do_rspec
+  end
+
+  desc "run rspec with all of installed versions of ruby"
+  task :rvm do
+    system("rvm exec 'ruby -e \"puts %Q!=!*48\";ruby -v;rspec -c spec/'")
+  end
 end
 
-task :default => :spec
+namespace :gem do
+  desc "build gem"
+  task :build do
+    system("gem build kyototycoon.gemspec")
+  end
 
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
+  desc "versioning"
+  task :version do
+    ver = ENV["VER"]
+    if ver.nil?
+      puts "version is not specified."
+      puts "Usage: VER=x.x.x rake ..."
+      exit
+    end
 
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "test #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+    # Prefer GNU sed to BSD sed
+    sed = [`which gsed`, `which sed`].map{|s| s.strip}.join(" ").strip.split(" ").first
+    system("echo lib/kyototycoon.rb  | xargs #{sed} -E -i \"s/VERSION = '[0-9.]+'/VERSION = '#{ver}'/g\"")
+    system("echo kyototycoon.gemspec | xargs #{sed} -E -i 's/s.version\s*=\s*\".*\"/s.version = \"#{ver}\"/g'")
+    system("echo Gemfile.lock        | xargs #{sed} -E -i 's/kyototycoon \(.*?\)/kyototycoon (#{ver})/g'")
+    system("git add -u")
+    puts "= NOTICE ="
+    puts "ver #{ver}, edit Changes.md for what changed and commit, git tag #{ver}"
+  end
 end
+
+task :default => ["rspec"]
