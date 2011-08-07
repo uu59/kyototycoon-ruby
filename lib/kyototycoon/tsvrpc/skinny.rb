@@ -11,6 +11,7 @@ class KyotoTycoon
         @tpl << "Content-Length: %d\r\n"
         @tpl << "Content-Type: text/tab-separated-values; colenc=%s\r\n"
         @tpl << "\r\n%s"
+        at_exit { finish }
       end
 
       def request(path, params, colenc)
@@ -49,7 +50,7 @@ class KyotoTycoon
       end
 
       def finish
-        @sock.close if @sock
+        @sock.close if @sock && !@sock.closed?
       end
     end
   end
