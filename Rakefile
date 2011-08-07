@@ -44,12 +44,14 @@ namespace :gem do
       puts "Usage: VER=x.x.x rake ..."
       exit
     end
+    date = Time.now.strftime("%Y-%m-%d")
 
     # Prefer GNU sed to BSD sed
     sed = [`which gsed`, `which sed`].map{|s| s.strip}.join(" ").strip.split(" ").first
     system("echo lib/kyototycoon.rb  | xargs #{sed} -E -i \"s/VERSION = '[0-9.]+'/VERSION = '#{ver}'/g\"")
     system("echo kyototycoon.gemspec | xargs #{sed} -E -i 's/s.version\s*=\s*\".*\"/s.version = \"#{ver}\"/g'")
     system("echo Gemfile.lock        | xargs #{sed} -E -i 's/kyototycoon \(.*?\)/kyototycoon (#{ver})/g'")
+    system("echo kyototycoon.gemspec | xargs #{sed} -E -i 's/s.date = .*$/s.date = %q{#{date}}/g'")
     system("git add -u")
     puts "= NOTICE ="
     puts "ver #{ver}, edit Changes.md for what changed and commit, git tag #{ver}"
