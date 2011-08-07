@@ -149,7 +149,7 @@ class KyotoTycoon
     res = request('/rpc/get_bulk', params)
     bulk = Tsvrpc.parse(res[:body], res[:colenc])
     bulk.delete_if{|k,v| k.match(/^[^_]/)}.inject({}){|r, (k,v)|
-      r[k[-1..1]] = @serializer.decode(v)
+      r[k[1..-1]] = @serializer.decode(v)
       r
     }
   end
