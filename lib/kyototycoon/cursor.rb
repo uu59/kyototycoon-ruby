@@ -71,9 +71,9 @@ class KyotoTycoon
       [res["key"], res["value"]]
     end
 
-    def seize(xt=nil)
-      res = request('/rpc/cur_seize', {"xt" => xt})
-      [res["key"], res["value"]]
+    def seize
+      res = request('/rpc/cur_seize')
+      [res["key"], res["value"], res["xt"]]
     end
 
     def remove
