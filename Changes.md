@@ -1,3 +1,8 @@
+## v0.6.0
+
+* added KyotoTycoon::Cursor for cursor support
+* always close socket at script exit
+
 ## v0.5.6
 
 * fixed for ruby 1.8.7

@@ -2,11 +2,13 @@ KyotoTycoon client for Ruby.
 
 # Feature / Fixture
 
+* cursor object supported(v0.6.0+)
 * Usable console as `$ bin/kyototycoon-console -h localhost -p 1991` like a Sequel(v0.5.4+)
 * Always Keep-Alive connect (v0.5.0+)
 * You can choise key/value encoding from URI or Base64
 * You can use MessagePack tranparency
 * Benchmark scripts appended(they are connect to localhost:19999)
+* Both Ruby versions supported 1.8.7 / 1.9.2
 
 # Install
 
@@ -105,6 +107,22 @@ KyotoTycoon client for Ruby.
     p @kt.report
     p @kt.status
     all_record_count = @kt.status['count']
+
+# Cursor samples
+
+For B+Tree type database only.
+http://fallabs.com/kyotocabinet/spex.html#tutorial_dbchart
+
+    @kt.clear
+    100.times{|n|
+      @kt.set("%02d" % n, n) # 00, 01, 02 .. 99
+    }
+    cur = @kt.cursor
+    cur.jump("90")
+    cur.each{|k,v| puts v} # => 90, 91, 92 .. 99
+
+    cur.jump("05")
+    cur.find_all{|k,v| k.to_i < 10} # => 05, 06, 07, 08, 09. Because it started with 05
 
 # Requirements
 
