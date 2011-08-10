@@ -8,7 +8,7 @@ class KyotoTycoon
     def initialize(kt, cur)
       @kt = kt
       @cur = cur
-      at_exit { delete! }
+      ObjectSpace.define_finalizer(self){delete!}
     end
 
     def each(&block)
