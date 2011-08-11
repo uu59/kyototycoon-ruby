@@ -1,3 +1,7 @@
+## v0.6.1
+
+* fix issue #4 for cursor seize method. thanks genki!
+
 ## v0.6.0
 
 * added KyotoTycoon::Cursor for cursor support
