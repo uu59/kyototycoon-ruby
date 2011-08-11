@@ -26,8 +26,17 @@ describe KyotoTycoon do
     @kt["34foo"].should be_nil
 
     cur.jump('55')
-    cur.seize.should == ["55foo","foo55"]
+    cur.seize.should == ["55foo","foo55", nil]
     @kt["55foo"].should be_nil
+  end
+
+  it 'should seize xt' do
+    xt = Time.now.to_i + 100
+    #@kt.logger= STDOUT
+    @kt.set('foo', 'foo', xt * -1)
+    cur = @kt.cursor
+    cur.jump('foo')
+    cur.seize.should == ["foo", "foo", Time.at(xt)]
   end
 
   it 'should handle cursor steps' do

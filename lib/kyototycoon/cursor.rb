@@ -73,7 +73,7 @@ class KyotoTycoon
 
     def seize
       res = request('/rpc/cur_seize')
-      [res["key"], res["value"], res["xt"]]
+      [res["key"], res["value"], (res["xt"].nil? ? nil : Time.at(res["xt"].to_i) )]
     end
 
     def remove
