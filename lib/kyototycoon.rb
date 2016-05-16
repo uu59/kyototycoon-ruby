@@ -260,7 +260,7 @@ class KyotoTycoon
   def ping(host, port)
     begin
       rpc = Tsvrpc::Skinny.new(host, port)
-      timeout(@connect_timeout){
+      Timeout.timeout(@connect_timeout){
         @logger.debug("connect check #{host}:#{port}")
         res = rpc.request('/rpc/echo', {'0' => '0'}, :U)
         @logger.debug(res)
